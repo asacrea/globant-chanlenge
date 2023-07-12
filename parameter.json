@@ -1,0 +1,26 @@
+[
+    {
+      "ParameterKey": "pDirsToCreate",
+      "ParameterValue": "source,stage,transform,error,archive"
+    },
+    {
+      "ParameterKey": "pS3BucketName",
+      "ParameterValue": "dood-bucket"
+    },
+    {
+      "ParameterKey": "pSourceFolder",
+      "ParameterValue": "source"
+    },
+    {
+      "ParameterKey": "pStageFolder",
+      "ParameterValue": "stage"
+    },
+    {
+      "ParameterKey": "pTransformFolder",
+      "ParameterValue": "transform"
+    },
+    {
+      "ParameterKey": "pEmailforNotification",
+      "ParameterValue": "xyz@something.com"
+    }
+  ]
