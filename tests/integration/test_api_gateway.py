@@ -5,7 +5,7 @@ import boto3
 import requests
 
 """
-Make sure env variable AWS_SAM_STACK_NAME exists with the name of the stack we are going to test. 
+Make sure env variable GlobantStack exists with the name of the stack we are going to test. 
 """
 
 
@@ -14,10 +14,10 @@ class TestApiGateway(TestCase):
 
     @classmethod
     def get_stack_name(cls) -> str:
-        stack_name = os.environ.get("AWS_SAM_STACK_NAME")
+        stack_name = os.environ.get("GlobantStack")
         if not stack_name:
             raise Exception(
-                "Cannot find env var AWS_SAM_STACK_NAME. \n"
+                "Cannot find env var GlobantStack. \n"
                 "Please setup this environment variable with the stack name where we are running integration tests."
             )
 
@@ -25,8 +25,8 @@ class TestApiGateway(TestCase):
 
     def setUp(self) -> None:
         """
-        Based on the provided env variable AWS_SAM_STACK_NAME,
-        here we use cloudformation API to find out what the HelloWorldApi URL is
+        Based on the provided env variable GlobantStack,
+        here we use cloudformation API to find out what the PutRegistries URL is
         """
         stack_name = TestApiGateway.get_stack_name()
 
@@ -42,8 +42,8 @@ class TestApiGateway(TestCase):
         stacks = response["Stacks"]
 
         stack_outputs = stacks[0]["Outputs"]
-        api_outputs = [output for output in stack_outputs if output["OutputKey"] == "HelloWorldApi"]
-        self.assertTrue(api_outputs, f"Cannot find output HelloWorldApi in stack {stack_name}")
+        api_outputs = [output for output in stack_outputs if output["OutputKey"] == "PutRegistries"]
+        self.assertTrue(api_outputs, f"Cannot find output PutRegistries in stack {stack_name}")
 
         self.api_endpoint = api_outputs[0]["OutputValue"]
 
