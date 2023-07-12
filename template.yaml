@@ -32,6 +32,88 @@ Parameters:
     Type: String
 
 Resources:
+
+  S3CustomResource:
+    Type: Custom::S3CustomResource
+    Properties:
+      ServiceToken: !GetAtt LambdaFunctionS3Object.Arn
+      the_bucket: !Ref S3Bucket
+      dirs_to_create: !Join [ ",", [!Ref pSourceFolder,!Ref pStageFolder]]
+
+  LambdaRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "lambda.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+          - !Ref ManagedPolicyforlambda
+          - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+  ManagedPolicyforlambda:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      Description: "This is sample CFN template"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "s3listaccess"
+            Effect: "Allow"
+            Action: 
+              - "s3:List*"
+            Resource: !Sub "arn:aws:s3:::${pS3BucketName}"
+          - Sid: "s3putaccess"
+            Effect: "Allow"
+            Action: 
+              - "s3:Get*"
+              - "s3:Put*"
+              - "s3:Delete*"
+            Resource: 
+              - !Sub "arn:aws:s3:::${pS3BucketName}/*"
+          - Sid: "s3deletebucket"
+            Effect: "Allow"
+            Action: 
+              - "s3:DeleteBucket"
+            Resource: !Sub "arn:aws:s3:::${pS3BucketName}"
+          - Sid: "SNStopicaccess"
+            Effect: "Allow"
+            Action: "sns:Publish"
+            Resource: !Ref  SNSTopic
+          - Sid: "glueaccess"
+            Effect: "Allow"
+            Action: "glue:*"
+            Resource:
+                - !Sub "arn:aws:glue:${AWS::Region}:${AWS::AccountId}:database/${GlueDB}"
+                - !Sub "arn:aws:glue:${AWS::Region}:${AWS::AccountId}:crawler/${CrawlPartitionedFile}"
+                - !Sub "arn:aws:glue:${AWS::Region}:${AWS::AccountId}:crawler/${CrawlRawFile}"
+                - !Sub "arn:aws:glue:${AWS::Region}:${AWS::AccountId}:table/${GlueDB}/*"
+                - !Sub "arn:aws:glue:${AWS::Region}:${AWS::AccountId}:catalog"
+
+  S3Bucket:
+    Type: AWS::S3::Bucket    
+    Properties:
+      VersioningConfiguration:
+        Status: Enabled
+      BucketName: !Sub ${pS3BucketName}
+
+  LambdaFunctionS3Object:
+     Type: AWS::Serverless::Function
+     Properties:
+      Layers: 
+        - !Ref LambdaLayerCfn
+      Description: "Work with S3 Buckets!"
+      Handler: s3object.lambda_handler
+      CodeUri: etl_process/utils
+      Role: !GetAtt LambdaRole.Arn
+      Timeout: 360
+      Runtime: python3.9
+
   TranseferFunction:
     Type: AWS::Serverless::Function
     Description: "API which execute a functions to transfer 1000 records to the database"
@@ -48,6 +130,16 @@ Resources:
           Properties:
             Path: /tranfer_data
             Method: post
+
+  LambdaLayerCfn:
+      Type: AWS::Serverless::LayerVersion
+      Properties:
+        LayerName: cfnresource-lib
+        Description: My layer
+        ContentUri: ./myLayerCfn
+        CompatibleRuntimes:
+          - python3.9
+        LicenseInfo: MIT
 
 Outputs:
   TransferAPI:
