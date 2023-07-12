@@ -1,0 +1,61 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  globant-project
+
+  SAM IaC template for globant-project
+
+Parameters:
+
+  pS3BucketName:
+    Type: String
+    Description: "Unique S3 bucket to create"
+    AllowedPattern: "[a-zA-Z][a-zA-Z0-9_-]*"
+
+  pStageFolder:
+    Type: String
+    Description: "Folder to store staging files"
+    Default: "stage"
+
+  pTransformFolder:
+    Type: String
+    Description: "Folder to store transformed dataset"
+    Default: "transform"
+
+  pSourceFolder:
+    Type: String
+    Description: "Source Folder to upload raw csv dataset to trigger the AWS Step functions"
+    Default: "source"
+
+  pEmailforNotification:
+    Description: "Valid email address to send success or error notification"
+    Type: String
+
+Resources:
+  TranseferFunction:
+    Type: AWS::Serverless::Function
+    Description: "API which execute a functions to transfer 1000 records to the database"
+    Properties:
+      CodeUri: etl_process/
+      Role: !GetAtt LambdaRole.Arn
+      Handler: transfer_function.lambda_handler
+      Runtime: python3.9
+      Timeout: 500
+      MemorySize: 512
+      Events:
+        TransferAPI:
+          Type: Api
+          Properties:
+            Path: /tranfer_data
+            Method: post
+
+Outputs:
+  TransferAPI:
+    Description: "API Gateway endpoint URL for Dev stage for Tranfer function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Dev/tranfer_data/"
+  TranseferFunction:
+    Description: "Transfer Lambda Function ARN"
+    Value: !GetAtt TranseferFunction.Arn
+  TranseferFunctionIamRole:
+    Description: "Implicit IAM Role created for Transfer function"
+    Value: !GetAtt TranseferFunctionRole.Arn
