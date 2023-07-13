@@ -226,6 +226,15 @@ Resources:
               - "codebuild:BatchGet*"
               - "codebuild:List*"
             Resource: !GetAtt  CodeBuildProject.Arn
+          - Sid: "dynamodbaccess"
+            Effect: "Allow"
+            Action:
+              - "dynamodb:Scan"
+              - "dynamodb:GetItem"
+              - "dynamodb:PutItem"
+              - "dynamodb:UpdateItem"
+              - "dynamodb:DeleteItem"
+            Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/etl_config"
           - Sid: "s3listaccess"
             Effect: "Allow"
             Action: 
@@ -286,6 +295,7 @@ Resources:
               - !GetAtt  StartETLFunction.Arn
               - !GetAtt  StartCrawlerFunction.Arn
               - !GetAtt  CrawlerStatusCheckFunction.Arn
+              - !GetAtt  RetrieveItemsFunction.Arn
           - Sid: "s3putaccess"
             Effect: "Allow"
             Action: 
@@ -420,6 +430,18 @@ Resources:
           - python3.9
         LicenseInfo: MIT
 
+  RetrieveItemsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Role: !GetAtt LambdaRole.Arn
+      Handler: get_dynamo_items.lambda_handler
+      CodeUri: etl_process/utils
+      Runtime: python3.10
+      Timeout: 30
+      Environment:
+        Variables:
+          RETRYLIMIT: 200
+
   StartStepFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -454,8 +476,14 @@ Resources:
       DefinitionString: !Sub |
         {
             "Comment": "A HELLO World example of the Amazon States Language using Pass states...",
-            "StartAt": "Start ETL Job",
+            "StartAt": "Process Clients",
             "States": {
+                "Process Clients": {
+                  "Type": "Task",
+                  "Resource": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${RetrieveItemsFunction}",
+                  "ResultPath": "$.clientList",
+                  "Next": "Start ETL Job"
+                },
                 "Start ETL Job": {
                   "Type": "Task",
                   "Resource": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${StartETLFunction}",
