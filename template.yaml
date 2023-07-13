@@ -707,6 +707,8 @@ Resources:
 
   CrawlPartitionedFile:
     Type: "AWS::Glue::Crawler"
+    DependsOn:
+      - "S3CustomResource"
     Properties:
       Role: !Ref GlueRole
       Description: "Crawler to generate the schema of the partitioned file"

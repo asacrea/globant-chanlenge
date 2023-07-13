@@ -60,7 +60,7 @@ Resources:
       - Ref: LambdaLayerCfn
       Description: Work with S3 Buckets!
       Handler: s3object.lambda_handler
-      CodeUri: s3://aws-cloud-formation-artifacts/e0da10dc00dc39115d8e859ccfa2c6db
+      CodeUri: s3://aws-cloud-formation-artifacts/1ec848d714b8b63580d42a30c8f493da
       Role:
         Fn::GetAtt:
         - LambdaRole
@@ -355,7 +355,7 @@ Resources:
         - LambdaRole
         - Arn
       Handler: start_codebuild.lambda_handler
-      CodeUri: s3://aws-cloud-formation-artifacts/e0da10dc00dc39115d8e859ccfa2c6db
+      CodeUri: s3://aws-cloud-formation-artifacts/1ec848d714b8b63580d42a30c8f493da
       Runtime: python3.9
       Timeout: 500
       Environment:
@@ -378,7 +378,7 @@ Resources:
         - LambdaRole
         - Arn
       Handler: start_etl.lambda_handler
-      CodeUri: s3://aws-cloud-formation-artifacts/e0da10dc00dc39115d8e859ccfa2c6db
+      CodeUri: s3://aws-cloud-formation-artifacts/1ec848d714b8b63580d42a30c8f493da
       Runtime: python3.8
       Timeout: 500
       MemorySize: 512
@@ -390,7 +390,7 @@ Resources:
         - LambdaRole
         - Arn
       Handler: start_crawler.lambda_handler
-      CodeUri: s3://aws-cloud-formation-artifacts/e0da10dc00dc39115d8e859ccfa2c6db
+      CodeUri: s3://aws-cloud-formation-artifacts/1ec848d714b8b63580d42a30c8f493da
       Runtime: python3.9
       Timeout: 60
   CrawlerStatusCheckFunction:
@@ -401,7 +401,7 @@ Resources:
         - LambdaRole
         - Arn
       Handler: check_crawler.lambda_handler
-      CodeUri: s3://aws-cloud-formation-artifacts/e0da10dc00dc39115d8e859ccfa2c6db
+      CodeUri: s3://aws-cloud-formation-artifacts/1ec848d714b8b63580d42a30c8f493da
       Runtime: python3.9
       Timeout: 30
       Environment:
@@ -411,7 +411,7 @@ Resources:
     Type: AWS::Serverless::Function
     Description: API which execute a functions to transfer 1000 records to the database
     Properties:
-      CodeUri: s3://aws-cloud-formation-artifacts/defa41dc17024a48c5dc10e3a5adca9c
+      CodeUri: s3://aws-cloud-formation-artifacts/fe4fb3f9ea764cf583b318308edd1373
       Role:
         Fn::GetAtt:
         - LambdaRole
@@ -452,7 +452,7 @@ Resources:
         - LambdaRole
         - Arn
       Handler: get_dynamo_items.lambda_handler
-      CodeUri: s3://aws-cloud-formation-artifacts/e0da10dc00dc39115d8e859ccfa2c6db
+      CodeUri: s3://aws-cloud-formation-artifacts/1ec848d714b8b63580d42a30c8f493da
       Runtime: python3.10
       Timeout: 30
       Environment:
@@ -466,7 +466,7 @@ Resources:
         - BasicLambdaRole
         - Arn
       Handler: start_step_function.lambda_handler
-      CodeUri: s3://aws-cloud-formation-artifacts/e0da10dc00dc39115d8e859ccfa2c6db
+      CodeUri: s3://aws-cloud-formation-artifacts/1ec848d714b8b63580d42a30c8f493da
       Runtime: python3.9
       Timeout: 60
       Environment:
@@ -498,10 +498,10 @@ Resources:
         - StepFunctionRole
         - Arn
       DefinitionString:
-        Fn::Sub: "{\n    \"Comment\": \"A HELLO World example of the Amazon States\
-          \ Language using Pass states...\",\n    \"StartAt\": \"Process Clients\"\
-          ,\n    \"States\": {\n        \"Process Clients\": {\n          \"Type\"\
-          : \"Task\",\n          \"Resource\": \"arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${RetrieveItemsFunction}\"\
+        Fn::Sub: "{\n    \"Comment\": \"A  template of the Amazon States Language\
+          \ using Pass states...\",\n    \"StartAt\": \"Process Clients\",\n    \"\
+          States\": {\n        \"Process Clients\": {\n          \"Type\": \"Task\"\
+          ,\n          \"Resource\": \"arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${RetrieveItemsFunction}\"\
           ,\n          \"ResultPath\": \"$.clientList\",\n          \"Next\": \"Start\
           \ ETL Job\"\n        },\n        \"Start ETL Job\": {\n          \"Type\"\
           : \"Task\",\n          \"Resource\": \"arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${StartETLFunction}\"\

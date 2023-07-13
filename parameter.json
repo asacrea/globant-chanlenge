@@ -5,7 +5,7 @@
     },
     {
       "ParameterKey": "pS3BucketName",
-      "ParameterValue": "globant-bucket"
+      "ParameterValue": "globant-bucket-2"
     },
     {
       "ParameterKey": "pSourceFolder",

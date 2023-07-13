@@ -26,7 +26,7 @@ def lambda_handler(event, context):
             'itemList': response,
             'bucket_name': bucket_name,
             'key_name': key_name,
-            "load_path": "s3://globant-bucket/stage/",
+            "load_path": "s3://globant-bucket-2/stage/",
             'source_file_name': source_file_name
         }
     }
