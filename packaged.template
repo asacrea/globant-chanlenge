@@ -640,6 +640,8 @@ Resources:
             - Fn::Sub: arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws-glue/*
   CrawlPartitionedFile:
     Type: AWS::Glue::Crawler
+    DependsOn:
+    - S3CustomResource
     Properties:
       Role:
         Ref: GlueRole
