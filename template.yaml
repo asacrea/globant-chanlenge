@@ -475,7 +475,7 @@ Resources:
       RoleArn: !GetAtt StepFunctionRole.Arn
       DefinitionString: !Sub |
         {
-            "Comment": "A HELLO World example of the Amazon States Language using Pass states...",
+            "Comment": "A  template of the Amazon States Language using Pass states...",
             "StartAt": "Process Clients",
             "States": {
                 "Process Clients": {
@@ -729,6 +729,3 @@ Outputs:
   TranseferFunction:
     Description: "Transfer Lambda Function ARN"
     Value: !GetAtt TranseferFunction.Arn
-  TranseferFunctionIamRole:
-    Description: "Implicit IAM Role created for Transfer function"
-    Value: !GetAtt TranseferFunctionRole.Arn
